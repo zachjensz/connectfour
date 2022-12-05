@@ -1,12 +1,12 @@
 <script>
 	import Slot from './Slot.svelte'
 
-	export let rows = [0, 0, 0, 0, 1, 2]
+	export let rows = []
 
 	$: hovered = -1
 
 	function hover() {
-		hovered = rows.length - [...rows].reverse().findIndex(slot => slot == 0) - 1
+		hovered = Math.min(rows.length - 1, rows.length - [...rows].reverse().findIndex(slot => slot == 0) - 1)
 	}
 	function unhover() {
 		hovered = -1
