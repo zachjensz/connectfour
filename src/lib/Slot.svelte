@@ -1,16 +1,15 @@
 <script>
+	export let slot = 0
 	export let hover = false;
 	export let dance = false;
-	export let primary = false;
-	export let secondary = false;
 </script>
 
 <div
 	class="slot"
 	class:hover={hover}
 	class:dance={dance}
-	class:primary={primary}
-	class:secondary={secondary}
+	class:primary={slot === 1}
+	class:secondary={slot === 2}
 	on:click
 	on:mouseover
 	on:mouseleave
