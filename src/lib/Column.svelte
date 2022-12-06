@@ -40,7 +40,7 @@
 	on:click={handleClick}
 >
 	{#each rows as slot, slotIndex}
-		<Slot {slot} hover={hovered == slotIndex} />
+		<Slot {slot} hover={hovered >= 0} drophint={hovered == slotIndex} />
 	{/each}
 </div>
 

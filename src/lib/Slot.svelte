@@ -1,12 +1,14 @@
 <script>
 	export let slot = 0
 	export let hover = false;
+	export let drophint = false;
 	export let dance = false;
 </script>
 
 <div
 	class="slot"
 	class:hover={hover}
+	class:drophint={drophint}
 	class:dance={dance}
 	class:primary={slot === 1}
 	class:secondary={slot === 2}
@@ -18,7 +20,7 @@
 <style>
 	.slot {
 		--slotImage: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0 0v50A50 50 0 0 1 50 0H0zm50 0a50 50 0 0 1 50 50V0H50zm50 50a50 50 0 0 1-50 50h50V50zm-50 50A50 50 0 0 1 0 50v50h50z' style='fill:%2300a;fill-rule:evenodd;'/%3E%3Ccircle cx='50' cy='50' r='48' style='fill:none;stroke:%2300a;stroke-width:5;'/%3E%3C/svg%3E");
-		--discImage: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23eef' stroke='%23ddf' stroke-width='5' cx='50' cy='50' r='45' /%3E%3C/svg%3E%0A");
+		--discImage: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%2388f' stroke='%23ddf' stroke-width='5' cx='50' cy='50' r='45' /%3E%3C/svg%3E%0A");
 		--discImagePrimary: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23e00' stroke='%23b00' stroke-width='5' cx='50' cy='50' r='45' /%3E%3C/svg%3E%0A");
 		--discImageSecondary: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle fill='%23ffe819' stroke='%23ffc010' stroke-width='5' cx='50' cy='50' r='45' /%3E%3C/svg%3E%0A");
 		--discSize: 4rem;
@@ -36,7 +38,7 @@
 		inset: 0px;
 		background-repeat: no-repeat;
 		background-position: center;
-		background-image: var(--discImage);
+		background-image: none;
 	}
 	.slot::after {
 		content: '';
@@ -48,6 +50,9 @@
 	.slot.hover::after {
 		z-index: 1;
 		filter: brightness(1.5);
+	}
+	.slot.drophint::before {
+		background-image: var(--discImage);
 	}
 	.slot.dance::before {
 		isolation: isolate;
