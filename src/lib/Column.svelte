@@ -3,20 +3,28 @@
 
 	const dispatch = createEventDispatcher();
 
+	import { isPlayerTurn } from './stores.js'
 	import Slot from './Slot.svelte'
 
 	export let columnIndex = -1
 	export let rows = []
+	let active = false
+	const activeUnsubscribe = isPlayerTurn.subscribe(value => {
+		active = value;
+	});
 
 	$: hovered = -1
 
 	function handleHover() {
+		if (!active) return
 		hovered = lowestFreeSlot()
 	}
 	function handleUnhover() {
+		if (!active) return
 		hovered = -1
 	}
 	function handleClick() {
+		if (!active) return
 		const dropPosition = lowestFreeSlot()
 		if (dropPosition == null) return
 		handleUnhover()
