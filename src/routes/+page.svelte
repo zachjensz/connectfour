@@ -1,6 +1,6 @@
 <script>
-  import Grid from './lib/Grid.svelte'
-  import Banner from './lib/Banner.svelte'
+  import Grid from '$lib/Grid.svelte'
+  import Banner from '$lib/Banner.svelte'
 </script>
 
 <Banner />

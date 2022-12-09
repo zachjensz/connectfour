@@ -1,3 +1,3 @@
 import { writable } from 'svelte/store'
 
-export const isPlayerTurn = writable(false)
+export const isPlayerTurn = writable(true)

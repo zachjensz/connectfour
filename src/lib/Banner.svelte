@@ -1,5 +1,5 @@
 <script>
-	import { isPlayerTurn } from './stores.js'
+	import { isPlayerTurn } from '$lib/stores.js'
 </script>
 
 {#if ($isPlayerTurn)}

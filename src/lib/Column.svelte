@@ -3,8 +3,8 @@
 
 	const dispatch = createEventDispatcher();
 
-	import { isPlayerTurn } from './stores.js'
-	import Slot from './Slot.svelte'
+	import { isPlayerTurn } from '$lib/stores.js'
+	import Slot from '$lib/Slot.svelte'
 
 	export let columnIndex = -1
 	export let rows = []
