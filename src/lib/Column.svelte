@@ -1,22 +1,27 @@
 <script>
 	import { createEventDispatcher } from 'svelte'
 
-	const dispatch = createEventDispatcher();
-
-	import { isPlayerTurn } from '$lib/stores.js'
+	import { isPlayerTurn, hoverColumn, dropColumn, oppHoverColumn, oppDropColumn } from '$lib/stores.js';
 	import Slot from '$lib/Slot.svelte'
 
 	export let columnIndex = -1
 	export let rows = []
-	let active = false
-	const activeUnsubscribe = isPlayerTurn.subscribe(value => {
+
+	let active
+	isPlayerTurn.subscribe(value => {
 		active = value;
+	});
+	oppHoverColumn.subscribe(col => {
+		hovered = -1
+		if (col != columnIndex) return
+		hovered = lowestFreeSlot()
 	});
 
 	$: hovered = -1
 
 	function handleHover() {
 		if (!active) return
+		hoverColumn.set(columnIndex)
 		hovered = lowestFreeSlot()
 	}
 	function handleUnhover() {
@@ -30,9 +35,7 @@
 		handleUnhover()
 		rows[dropPosition] = 1;
 		handleHover()
-		dispatch("drop", {
-			columnIndex: columnIndex
-		});
+		dropColumn.set(columnIndex)
 	}
 	function lowestFreeSlot() {
 		if (rows[0] > 0) return null
