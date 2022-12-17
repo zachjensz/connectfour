@@ -16,6 +16,14 @@
 		if (col != columnIndex) return
 		hovered = lowestFreeSlot()
 	});
+	oppDropColumn.subscribe(col => {
+		console.log('oppdrop', col)
+		if (col !== columnIndex) return
+		const dropPosition = lowestFreeSlot()
+		if (dropPosition == null) return
+		rows[dropPosition] = 2;
+		oppDropColumn.set(undefined)
+	});
 
 	$: hovered = -1
 

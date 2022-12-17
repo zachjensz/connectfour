@@ -44,6 +44,7 @@
 			});
 			socket.on('drop', (column) => {
 				console.log('DROP', column);
+				oppDropColumn.set(column);
 				isPlayerTurn.set(true);
 			});
 			hoverColumn.subscribe((value) => {
