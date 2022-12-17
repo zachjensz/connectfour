@@ -17,7 +17,6 @@
 		hovered = lowestFreeSlot()
 	});
 	oppDropColumn.subscribe(col => {
-		console.log('oppdrop', col)
 		if (col !== columnIndex) return
 		const dropPosition = lowestFreeSlot()
 		if (dropPosition == null) return

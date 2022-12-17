@@ -13,7 +13,7 @@ const webSocketServer = {
 		io.on('connection', (socket) => {
 			const player = socket.id;
 			socket.on('join', (uuid, cb) => {
-				if (!games.has(uuid)) return cb('null');
+				if (!games.has(uuid)) return cb('unavailable');
 				const game = games.get(uuid);
 				const isFull = () => game.turn && game.wait;
 				if (isFull()) return cb('full');
@@ -21,10 +21,10 @@ const webSocketServer = {
 				game?.turn ? (game.wait = player) : (game.turn = player);
 				const isMyTurn = () => (game.turn === player && isFull());
 				if (isFull()) {
-					io.to(uuid).emit('start');
-					io.to(game.turn).emit('turn');
+					socket.to(game.turn).emit('turn');
+					socket.to(game.wait).emit('wait');
 				}
-				cb('joined');
+				cb(isMyTurn() ? 'turn' : 'wait');
 
 				socket.on('hover', (column) => {
 					if (!isMyTurn()) return;
@@ -40,8 +40,9 @@ const webSocketServer = {
 				});
 
 				socket.on('disconnect', () => {
-					socket.to(uuid).emit('wait');
+					socket.to(uuid).emit('inactive');
 					if (game.turn === player) game.turn = null;
+					if (game.wait === player) game.wait = null;
 				});
 			});
 		});

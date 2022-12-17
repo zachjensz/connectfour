@@ -24,42 +24,49 @@
 	onMount(() => {
 		const socket = io();
 		socket.emit('join', gameuuid, (confirm) => {
-      if (confirm == 'null' || confirm == 'full') return
-			console.log(confirm);
-			socket.on('start', () => {
+      if (confirm === 'unavailable' || confirm === 'full') return
+			if (confirm === 'turn') {
 				isPlaying.set(true);
-				console.log('START');
+				isPlayerTurn.set(true);
+			}
+			if (confirm === 'wait') {
+				isPlaying.set(true);
+				isPlayerTurn.set(false);
+			}
+			socket.on('inactive', () => {
+				isPlaying.set(false);
+				console.log('INACTIVE');
 			});
 			socket.on('wait', () => {
-				isPlaying.set(false);
+				isPlaying.set(true);
+				isPlayerTurn.set(false);
 				console.log('WAIT');
 			});
 			socket.on('turn', () => {
-				console.log('TURN');
+				isPlaying.set(true);
 				isPlayerTurn.set(true);
+				console.log('TURN');
 			});
 			socket.on('hover', (column) => {
 				oppHoverColumn.set(column);
 				console.log('HOVER');
 			});
 			socket.on('drop', (column) => {
-				console.log('DROP', column);
 				oppDropColumn.set(column);
 				isPlayerTurn.set(true);
+				console.log('DROP', column);
 			});
 			hoverColumn.subscribe((value) => {
         if (!active) return
 				socket.emit('hover', value);
-        console.log('emit hover')
+        console.log('hover')
 			});
 			dropColumn.subscribe((value) => {
-        console.log('emit: drop', value);
         if (!active) return
-        console.log('emit: drop, is active', value);
 				socket.emit('drop', value);
         dropColumn.set(undefined)
         isPlayerTurn.set(false)
-        console.log('emit: drop end')
+        console.log('drop')
 			});
 		});
 	});

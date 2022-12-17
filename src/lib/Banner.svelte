@@ -1,14 +1,9 @@
 <script>
 	import { isPlaying, isPlayerTurn } from '$lib/stores.js';
-
-	let isTurn;
-	isPlayerTurn.subscribe((data) => {
-		isTurn = data;
-	});
 </script>
 
-{#if isPlaying}
-	{#if isTurn}
+{#if $isPlaying}
+	{#if $isPlayerTurn}
 		<h1>Your turn</h1>
 	{:else}
 		<h1>Opponent's turn</h1>
