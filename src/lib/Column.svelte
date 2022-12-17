@@ -1,60 +1,55 @@
 <script>
-	import { createEventDispatcher } from 'svelte'
+	import {
+		isPlayerTurn,
+		hoverColumn,
+		dropColumn,
+		oppHoverColumn,
+		oppDropColumn
+	} from '$lib/stores.js';
+	import Slot from '$lib/Slot.svelte';
 
-	import { isPlayerTurn, hoverColumn, dropColumn, oppHoverColumn, oppDropColumn } from '$lib/stores.js';
-	import Slot from '$lib/Slot.svelte'
+	export let columnIndex = -1;
+	export let rows = [];
+	$: hovered = -1;
 
-	export let columnIndex = -1
-	export let rows = []
-
-	let active
-	isPlayerTurn.subscribe(value => {
-		active = value;
+	oppHoverColumn.subscribe((col) => {
+		hovered = -1;
+		if (col != columnIndex) return;
+		hovered = lowestFreeSlot();
 	});
-	oppHoverColumn.subscribe(col => {
-		hovered = -1
-		if (col != columnIndex) return
-		hovered = lowestFreeSlot()
+	oppDropColumn.subscribe((col) => {
+		if (col !== columnIndex) return;
+		drop(false);
+		oppDropColumn.set(undefined);
 	});
-	oppDropColumn.subscribe(col => {
-		if (col !== columnIndex) return
-		const dropPosition = lowestFreeSlot()
-		if (dropPosition == null) return
-		rows[dropPosition] = 2;
-		oppDropColumn.set(undefined)
-	});
-
-	$: hovered = -1
 
 	function handleHover() {
-		if (!active) return
-		hoverColumn.set(columnIndex)
-		hovered = lowestFreeSlot()
-	}
-	function handleUnhover() {
-		if (!active) return
-		hovered = -1
+		if (!$isPlayerTurn) return;
+		hoverColumn.set(columnIndex);
+		hovered = lowestFreeSlot();
 	}
 	function handleClick() {
-		if (!active) return
-		const dropPosition = lowestFreeSlot()
-		if (dropPosition == null) return
-		handleUnhover()
-		rows[dropPosition] = 1;
-		handleHover()
-		dropColumn.set(columnIndex)
+		if (!$isPlayerTurn) return;
+		if (drop(true)) dropColumn.set(columnIndex);
+	}
+	function drop(isPlayer) {
+		const dropPosition = lowestFreeSlot();
+		if (dropPosition === null) return false;
+		hovered = -1;
+		rows[dropPosition] = isPlayer ? 1 : 2;
+		hovered = lowestFreeSlot();
+		return true
 	}
 	function lowestFreeSlot() {
-		if (rows[0] > 0) return null
-		if (rows[rows.length-1] == 0) return rows.length - 1
-		return rows.length - [...rows].reverse().findIndex(slot => slot < 1) - 1
+		if (rows[0] > 0) return null;
+		return rows.length - [...rows].reverse().findIndex((slot) => slot < 1) - 1;
 	}
 </script>
 
 <div
 	class="column"
 	on:mouseenter={handleHover}
-	on:mouseleave={handleUnhover}
+	on:mouseleave={() => hovered = -1}
 	on:click={handleClick}
 >
 	{#each rows as slot, slotIndex}

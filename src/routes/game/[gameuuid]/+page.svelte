@@ -5,7 +5,7 @@
 
 	import { onMount } from 'svelte';
 	import {
-		isPlaying,
+		status,
 		isPlayerTurn,
 		hoverColumn,
 		dropColumn,
@@ -16,57 +16,63 @@
 	import Banner from '$lib/Banner.svelte';
 	import { io } from 'socket.io-client';
 
-	let active
-	isPlayerTurn.subscribe(value => {
+	let active;
+	isPlayerTurn.subscribe((value) => {
 		active = value;
 	});
 
 	onMount(() => {
 		const socket = io();
 		socket.emit('join', gameuuid, (confirm) => {
-      if (confirm === 'unavailable' || confirm === 'full') return
-			if (confirm === 'turn') {
-				isPlaying.set(true);
-				isPlayerTurn.set(true);
-			}
-			if (confirm === 'wait') {
-				isPlaying.set(true);
-				isPlayerTurn.set(false);
+			switch (confirm) {
+				case 'unavailable':
+					status.set('Game unavailable');
+					return;
+				case 'full':
+					status.set('Game full');
+					return;
+				case 'turn':
+					isPlayerTurn.set(true);
+					break;
+				case 'wait':
+					isPlayerTurn.set(false);
+					break;
+				default:
+					throw 'unknown confirmation on joining';
 			}
 			socket.on('inactive', () => {
-				isPlaying.set(false);
-				console.log('INACTIVE');
+				status.set('Opponent disconnected. Waiting...');
+				isPlayerTurn.set(true);
+				console.log('receive: inactive');
 			});
 			socket.on('wait', () => {
-				isPlaying.set(true);
 				isPlayerTurn.set(false);
-				console.log('WAIT');
+				console.log('receive: wait');
 			});
 			socket.on('turn', () => {
-				isPlaying.set(true);
 				isPlayerTurn.set(true);
-				console.log('TURN');
+				console.log('receive: turn');
 			});
 			socket.on('hover', (column) => {
 				oppHoverColumn.set(column);
-				console.log('HOVER');
+				console.log('receive: hover');
 			});
 			socket.on('drop', (column) => {
 				oppDropColumn.set(column);
 				isPlayerTurn.set(true);
-				console.log('DROP', column);
+				console.log('receive: drop', column);
 			});
-			hoverColumn.subscribe((value) => {
-        if (!active) return
-				socket.emit('hover', value);
-        console.log('hover')
+			hoverColumn.subscribe((column) => {
+				if (!active) return;
+				socket.emit('hover', column);
+				console.log('send: hover');
 			});
-			dropColumn.subscribe((value) => {
-        if (!active) return
-				socket.emit('drop', value);
-        dropColumn.set(undefined)
-        isPlayerTurn.set(false)
-        console.log('drop')
+			dropColumn.subscribe((column) => {
+				if (!active) return;
+				socket.emit('drop', column);
+				dropColumn.set(undefined);
+				isPlayerTurn.set(false);
+				console.log('send: drop', column);
 			});
 		});
 	});
