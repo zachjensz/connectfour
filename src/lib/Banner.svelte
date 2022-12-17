@@ -7,5 +7,5 @@
 {:else if $isPlayerTurn === false}
 	<h1>Opponent's turn</h1>
 {:else}
-	<h1>{status}</h1>
+	<h1>{$status}</h1>
 {/if}
