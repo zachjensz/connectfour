@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import {
 		status,
+		drops,
 		isPlayerTurn,
 		hoverColumn,
 		dropColumn,
@@ -23,7 +24,8 @@
 
 	onMount(() => {
 		const socket = io();
-		socket.emit('join', gameuuid, (confirm) => {
+		socket.emit('join', gameuuid, (confirm, previousDrops) => {
+			drops.set(previousDrops);
 			switch (confirm) {
 				case 'unavailable':
 					status.set('Game unavailable');
@@ -69,6 +71,7 @@
 			});
 			dropColumn.subscribe((column) => {
 				if (!active) return;
+				if (typeof column !== 'number') return;
 				socket.emit('drop', column);
 				dropColumn.set(undefined);
 				isPlayerTurn.set(false);

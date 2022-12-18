@@ -1,5 +1,6 @@
 <script>
 	import {
+		drops,
 		isPlayerTurn,
 		hoverColumn,
 		dropColumn,
@@ -12,6 +13,20 @@
 	export let rows = [];
 	$: hovered = -1;
 
+	drops.subscribe((history) => {
+		if (!history) return;
+		setTimeout(() => {
+			history
+				.map((column, index) => [column, index % 2 === 0])
+				.filter((drop) => drop[0] === columnIndex)
+				.forEach((dropped) => drop(historyToCurrent(dropped)));
+		}, 20);
+		function historyToCurrent(dropped) {
+			const isHistoryOdd = history.length % 2;
+			const isPlayerTwo = (isHistoryOdd && $isPlayerTurn) || (!isHistoryOdd && !$isPlayerTurn);
+			return isPlayerTwo ? !dropped[1] : dropped[1];
+		}
+	});
 	oppHoverColumn.subscribe((col) => {
 		hovered = -1;
 		if (col != columnIndex) return;
@@ -38,7 +53,7 @@
 		hovered = -1;
 		rows[dropPosition] = isPlayer ? 1 : 2;
 		hovered = lowestFreeSlot();
-		return true
+		return true;
 	}
 	function lowestFreeSlot() {
 		if (rows[0] > 0) return null;
@@ -49,7 +64,7 @@
 <div
 	class="column"
 	on:mouseenter={handleHover}
-	on:mouseleave={() => hovered = -1}
+	on:mouseleave={() => (hovered = -1)}
 	on:click={handleClick}
 >
 	{#each rows as slot, slotIndex}

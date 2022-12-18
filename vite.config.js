@@ -24,7 +24,7 @@ const webSocketServer = {
 					socket.to(game.turn).emit('turn');
 					socket.to(game.wait).emit('wait');
 				}
-				cb(isMyTurn() ? 'turn' : 'wait');
+				cb(isMyTurn() ? 'turn' : 'wait', game.drops);
 
 				socket.on('hover', (column) => {
 					if (!isMyTurn()) return;
@@ -33,6 +33,7 @@ const webSocketServer = {
 
 				socket.on('drop', (column) => {
 					if (!isMyTurn()) return;
+					if (typeof column !== "number") return;
 					socket.to(uuid).emit('drop', column);
 					game.turn = game.wait;
 					game.wait = player;
