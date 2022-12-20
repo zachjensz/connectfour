@@ -64,6 +64,10 @@
 				isPlayerTurn.set(true);
 				console.log('receive: drop', column);
 			});
+			socket.on('win', () => {
+				status.set($isPlayerTurn ? 'Opponent wins' : 'You win');
+				isPlayerTurn.set(undefined);
+			});
 			hoverColumn.subscribe((column) => {
 				if (!active) return;
 				socket.emit('hover', column);
