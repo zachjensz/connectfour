@@ -1,5 +1,6 @@
 <script>
 	/** @type {import('./$types').PageData} */
+	import { dev } from '$app/environment';
 	export let data;
 	const gameuuid = data.gameuuid;
 
@@ -23,7 +24,7 @@
 	});
 
 	onMount(() => {
-		const socket = io();
+		const socket = io(dev ? "" : "wss://prodsite");
 		socket.emit('join', gameuuid, (confirm, previousDrops) => {
 			drops.set(previousDrops);
 			switch (confirm) {
