@@ -87,12 +87,4 @@
 </script>
 
 <Banner />
-<main>
-	<Grid />
-</main>
-
-<style>
-	main {
-		display: flex;
-	}
-</style>
+<Grid />
