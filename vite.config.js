@@ -11,7 +11,7 @@ const config = {
 			configureServer(server) {
 				const io = new Server(server.httpServer);
 				const games = new Map();
-				games.set('zach', {
+				games.set('z', {
 					drops: []
 				});
 				io.on('connection', (socket) => {
