@@ -11,82 +11,105 @@ const config = {
 			configureServer(server) {
 				const io = new Server(server.httpServer);
 				const games = new Map();
+				const WINNING_SEQUENCE = 4;
+				const COLUMNS = 7;
+				const ROWS = 6;
 				games.set('z', {
-					drops: []
+					grid: Array.from({ length: COLUMNS }, () => Array(ROWS).fill('')),
+					drops: [],
+					socketOne: null,
+					socketTwo: null,
+					socketOneTurn: false,
+					get playerTurn() {
+						return this.socketOneTurn ? 1 : 2;
+					},
+					get full() {
+						return this.socketOne && this.socketTwo;
+					},
+					get socketTurn() {
+						return this.socketOneTurn ? this.socketOne : this.socketTwo;
+					},
+					get socketWait() {
+						return this.socketOneTurn ? this.socketTwo : this.socketOne;
+					}
 				});
 				io.on('connection', (socket) => {
-					const player = socket.id;
+					const me = socket.id;
 					socket.on('join', (uuid, cb) => {
-						if (!games.has(uuid)) return cb('unavailable');
+						if (!games.has(uuid)) return cb(`Game ${uuid} doesn't exist`);
 						const game = games.get(uuid);
-						const isFull = () => game.turn && game.wait;
-						if (isFull()) return cb('full');
+						if (game.full) return cb(`Game ${uuid} is full`);
 						socket.join(uuid);
-						game?.turn ? (game.wait = player) : (game.turn = player);
-						const isMyTurn = () => game.turn === player && isFull();
-						if (isFull()) {
-							socket.to(game.turn).emit('turn');
-							socket.to(game.wait).emit('wait');
+						game.socketOne ? (game.socketTwo = me) : (game.socketOne = me);
+						if (game.full) {
+							socket.to(game.socketTurn).emit('turn');
+							socket.to(game.socketWait).emit('wait');
 						}
-						cb(isMyTurn() ? 'turn' : 'wait', game.drops);
-
+						cb(game.socketTurn == me ? 'turn' : 'wait', game.drops);
 						socket.on('hover', (column) => {
-							if (!isMyTurn()) return;
+							if (!game.socketTurn == me) return;
 							socket.to(uuid).volatile.emit('hover', column);
 						});
-
 						socket.on('drop', (column) => {
-							if (!isMyTurn()) return;
+							if (!game.socketTurn == me) return;
 							if (typeof column !== 'number') return;
 							socket.to(uuid).emit('drop', column);
 							game.drops.push(column);
-							if (hasWon(game.drops)) {
+							game.grid[column][lowestFreeSlot(game.grid[column])] = game.playerTurn;
+							//
+							let stringg = '';
+							game.grid.forEach((column) => {
+								stringg += '\n';
+								column.forEach((row) => {
+									stringg += row || 0;
+								});
+							});
+							console.log(stringg);
+							//
+							if (hasWon(game, column, game.playerTurn)) {
 								io.to(uuid).emit('win');
 							} else {
-								game.turn = game.wait;
-								game.wait = player;
+								console.log('1socketoneturn: ' + game.socketOneTurn);
+								game.socketOneTurn = !game.socketOneturn;
+								console.log('2socketoneturn: ' + game.socketOneTurn);
 							}
 						});
-
 						socket.on('disconnect', () => {
 							socket.to(uuid).emit('inactive');
-							if (game.turn === player) game.turn = null;
-							if (game.wait === player) game.wait = null;
+							if (game.socketOne == me) game.socketOne = null;
+							if (game.socketTwo == me) game.socketTwo = null;
 						});
 					});
 				});
-				function hasWon(history) {
-					const WINNING_SEQUENCE = 4;
-					const COLUMNS = 7;
-					const ROWS = 6;
-					const grid = new Array();
-					for (let i = 0; i < COLUMNS; i++) {
-						grid.push([]);
-						for (let j = 0; j < ROWS; j++) {
-							grid[i].push(0);
-						}
-					}
-					history.forEach((drop, index) => {
-						grid[drop][lowestFreeSlot(grid[drop])] = index % 2 ? 2 : 1;
-					});
-					const lastDropCol = [...history].pop();
-					const lastDropRow = highestOccupiedSlot(grid[lastDropCol]);
-					const lastDropPlayer = grid[lastDropCol][highestOccupiedSlot(grid[lastDropCol])];
-					const win =
-						checkDirection(lastDropPlayer, lastDropCol, lastDropRow, 0, -1) +
-						checkDirection(lastDropPlayer, lastDropCol, lastDropRow, 1, -1) +
-						checkDirection(lastDropPlayer, lastDropCol, lastDropRow, 1, 0) +
-						checkDirection(lastDropPlayer, lastDropCol, lastDropRow, 1, 1) +
-						checkDirection(lastDropPlayer, lastDropCol, lastDropRow, 0, 1) +
-						checkDirection(lastDropPlayer, lastDropCol, lastDropRow, -1, 1) +
-						checkDirection(lastDropPlayer, lastDropCol, lastDropRow, -1, 0) +
-						checkDirection(lastDropPlayer, lastDropCol, lastDropRow, -1, -1);
+				function hasWon(game, lastDropCol, lastDropPlayer) {
+					const lastDropRow = highestOccupiedSlot(game.grid[lastDropCol]);
+					const win = [
+						[[0, 1]],
+						[
+							[1, 0],
+							[-1, 0]
+						],
+						[
+							[1, -1],
+							[-1, 1]
+						],
+						[
+							[1, 1],
+							[-1, -1]
+						]
+					].some(
+						(line) =>
+							line.reduce(
+								(length, direction) =>
+									length +
+									checkSlot(lastDropPlayer, lastDropCol, lastDropRow, direction[0], direction[1]),
+								0
+							) >=
+							WINNING_SEQUENCE - 1
+					);
 					if (win) return true;
-					function checkDirection(player, column, row, colOff, rowOff) {
-						return checkSlot(player, column, row, colOff, rowOff) + 1 >= WINNING_SEQUENCE;
-					}
 					function checkSlot(player, column, row, colOff, rowOff) {
-						if (grid[column + colOff]?.[row + rowOff] !== player) return 0;
+						if (game.grid[column + colOff]?.[row + rowOff] !== player) return 0;
 						return checkSlot(player, column + colOff, row + rowOff, colOff, rowOff) + 1;
 					}
 				}
