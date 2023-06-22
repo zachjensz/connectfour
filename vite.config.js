@@ -56,22 +56,11 @@ const config = {
 							socket.to(uuid).emit('drop', column);
 							game.drops.push(column);
 							game.grid[column][lowestFreeSlot(game.grid[column])] = game.playerTurn;
-							//
-							let stringg = '';
-							game.grid.forEach((column) => {
-								stringg += '\n';
-								column.forEach((row) => {
-									stringg += row || 0;
-								});
-							});
-							console.log(stringg);
-							//
 							if (hasWon(game, column, game.playerTurn)) {
 								io.to(uuid).emit('win');
 							} else {
-								console.log('1socketoneturn: ' + game.socketOneTurn);
-								game.socketOneTurn = !game.socketOneturn;
-								console.log('2socketoneturn: ' + game.socketOneTurn);
+								const newTurn = !game.socketOneTurn;
+								game.socketOneTurn = newTurn;
 							}
 						});
 						socket.on('disconnect', () => {
@@ -84,17 +73,17 @@ const config = {
 				function hasWon(game, lastDropCol, lastDropPlayer) {
 					const lastDropRow = highestOccupiedSlot(game.grid[lastDropCol]);
 					const win = [
-						[[0, 1]],
+						[[0, 1]], // South
 						[
-							[1, 0],
+							[1, 0], // East and West
 							[-1, 0]
 						],
 						[
-							[1, -1],
+							[1, -1], // North East and South West
 							[-1, 1]
 						],
 						[
-							[1, 1],
+							[1, 1], // North West and South East
 							[-1, -1]
 						]
 					].some(
