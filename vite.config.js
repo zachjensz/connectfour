@@ -9,23 +9,17 @@ const config = {
 		{
 			name: 'webSocketServer',
 			configureServer(server) {
-				const io = new Server(server.httpServer);
-				const games = new Map();
 				const WINNING_SEQUENCE = 4;
 				const COLUMNS = 7;
 				const ROWS = 6;
+				const io = new Server(server.httpServer);
+				const games = new Map();
 				games.set('z', {
 					grid: Array.from({ length: COLUMNS }, () => Array(ROWS).fill('')),
 					drops: [],
 					socketOne: null,
 					socketTwo: null,
 					socketOneTurn: false,
-					get playerTurn() {
-						return this.socketOneTurn ? 1 : 2;
-					},
-					get full() {
-						return this.socketOne && this.socketTwo;
-					},
 					get socketTurn() {
 						return this.socketOneTurn ? this.socketOne : this.socketTwo;
 					},
@@ -38,10 +32,10 @@ const config = {
 					socket.on('join', (uuid, cb) => {
 						if (!games.has(uuid)) return cb(`Game ${uuid} doesn't exist`);
 						const game = games.get(uuid);
-						if (game.full) return cb(`Game ${uuid} is full`);
+						if (game.socketOne && game.socketTwo) return cb(`Game ${uuid} is full`);
 						socket.join(uuid);
 						game.socketOne ? (game.socketTwo = me) : (game.socketOne = me);
-						if (game.full) {
+						if (game.socketOne && game.socketTwo) {
 							socket.to(game.socketTurn).emit('turn');
 							socket.to(game.socketWait).emit('wait');
 						}
@@ -55,8 +49,8 @@ const config = {
 							if (typeof column !== 'number') return;
 							socket.to(uuid).emit('drop', column);
 							game.drops.push(column);
-							game.grid[column][lowestFreeSlot(game.grid[column])] = game.playerTurn;
-							if (hasWon(game, column, game.playerTurn)) {
+							game.grid[column][lowestFreeSlot(game.grid[column])] = game.socketOneTurn ? 1 : 2;
+							if (hasWon(game, column, game.socketOneTurn ? 1 : 2)) {
 								io.to(uuid).emit('win');
 							} else {
 								const newTurn = !game.socketOneTurn;
