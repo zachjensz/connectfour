@@ -29,10 +29,10 @@
 			drops.set(previousDrops);
 			switch (confirm) {
 				case 'unavailable':
-					status.set('Game unavailable');
+					status.set(`Game ${gameuuid} is unavilable`);
 					return;
 				case 'full':
-					status.set('Game full');
+					status.set(`Game ${gameuuid} is full`);
 					return;
 				case 'turn':
 					isPlayerTurn.set(true);

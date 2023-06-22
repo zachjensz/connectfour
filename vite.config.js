@@ -30,9 +30,9 @@ const config = {
 				io.on('connection', (socket) => {
 					const me = socket.id;
 					socket.on('join', (uuid, cb) => {
-						if (!games.has(uuid)) return cb(`Game ${uuid} doesn't exist`);
+						if (!games.has(uuid)) return cb('unavailable');
 						const game = games.get(uuid);
-						if (game.socketOne && game.socketTwo) return cb(`Game ${uuid} is full`);
+						if (game.socketOne && game.socketTwo) return cb('full');
 						socket.join(uuid);
 						game.socketOne ? (game.socketTwo = me) : (game.socketOne = me);
 						if (game.socketOne && game.socketTwo) {
