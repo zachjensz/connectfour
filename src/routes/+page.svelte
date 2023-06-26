@@ -66,5 +66,16 @@
 	});
 </script>
 
-homepage
+<h1>Zach's Connect Four</h1>
+<main>
+	<p>Invite a friend with this link:</p>
+	<br />
+	<code>https://connectfour.url/ao4t</code>
+</main>
 
+<style>
+	main {
+		display: grid;
+		place-content: center;
+	}
+</style>
