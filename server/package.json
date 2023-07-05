@@ -1,18 +1,16 @@
 {
 	"name": "connectfour-server",
 	"version": "0.0.1",
-	"private": true,
 	"scripts": {
-		"dev": "node server.js",
-		"lint": "prettier --plugin-search-dir . --check .",
-		"format": "prettier --plugin-search-dir . --write ."
+		"dev": "nodemon server.js"
 	},
 	"devDependencies": {
-		"prettier": "^2.8.1",
+		"prettier": "^2.8.1"
 	},
 	"type": "module",
 	"dependencies": {
 		"nanoid": "^4.0.2",
-		"socket.io": "^4.5.4",
+		"nodemon": "^2.0.22",
+		"socket.io": "^4.5.4"
 	}
 }

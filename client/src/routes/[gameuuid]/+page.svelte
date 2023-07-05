@@ -2,8 +2,9 @@
 	/** @type {import('./$types').PageData} */
 	export let data;
 	const gameuuid = data.gameuuid;
+	const DEV_SERVER_URL = 'http://localhost:6464';
+	const PROD_SERVER_URL = 'http://connectfour.pages.dev';
 	import { dev } from '$app/environment';
-
 	import { onMount } from 'svelte';
 	import {
 		status,
@@ -24,7 +25,7 @@
 	});
 
 	onMount(() => {
-		const socket = io(dev ? '' : 'wss://prodsite');
+		const socket = io(dev ? DEV_SERVER_URL : PROD_SERVER_URL);
 		socket.emit('join', gameuuid, (confirm, previousDrops) => {
 			drops.set(previousDrops);
 			switch (confirm) {
