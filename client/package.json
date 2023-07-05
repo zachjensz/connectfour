@@ -26,7 +26,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@sveltejs/adapter-cloudflare": "^2.3.0",
 		"nanoid": "^4.0.2",
 		"socket.io": "^4.5.4",
 		"socket.io-client": "^4.5.4",
