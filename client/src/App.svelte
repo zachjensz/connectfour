@@ -1,6 +1,6 @@
 <script>
 	const DEV_SERVER_URL = 'http://localhost:6464';
-	const PROD_SERVER_URL = 'http://connectfour.pages.dev';
+	const PROD_SERVER_URL = import.meta.env.PROD_SERVER_URL
 	const dev = import.meta.env
 	import { io } from 'socket.io-client';
 	import { onMount } from 'svelte';
