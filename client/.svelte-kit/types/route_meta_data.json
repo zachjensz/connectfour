@@ -1,6 +1,0 @@
-{
-	"/": [],
-	"/[gameuuid]": [
-		"src/routes/[gameuuid]/+page.js"
-	]
-}

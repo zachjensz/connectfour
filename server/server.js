@@ -1,4 +1,5 @@
 import { Server } from "socket.io";
+import { nanoid } from "nanoid";
 
 const WINNING_SEQUENCE = 4;
 const COLUMNS = 7;
@@ -10,32 +11,51 @@ const io = new Server(6464, {
 	},
 });
 const games = new Map();
-games.set("z", {
-	grid: Array.from({ length: COLUMNS }, () => Array(ROWS).fill("")),
-	drops: [],
-	socketOne: null,
-	socketTwo: null,
-	socketOneTurn: false,
-	get socketTurn() {
-		return this.socketOneTurn ? this.socketOne : this.socketTwo;
-	},
-	get socketWait() {
-		return this.socketOneTurn ? this.socketTwo : this.socketOne;
-	},
-});
 io.on("connection", (socket) => {
 	const me = socket.id;
-	socket.on("join", (uuid, cb) => {
-		if (!games.has(uuid)) return cb("unavailable");
+	socket.on("create", () => {
+		const new_uuid = nanoid(5);
+		games.set(new_uuid, {
+			grid: Array.from({ length: COLUMNS }, () => Array(ROWS).fill("")),
+			drops: [],
+			socketOne: null,
+			socketTwo: null,
+			socketOneTurn: false,
+			get socketTurn() {
+				return this.socketOneTurn ? this.socketOne : this.socketTwo;
+			},
+			get socketWait() {
+				return this.socketOneTurn ? this.socketTwo : this.socketOne;
+			},
+		});
+		io.to(me).emit("created", new_uuid);
+		console.log(`game ${new_uuid} created`);
+		const game = games.get(new_uuid);
+		manageGame(new_uuid);
+	});
+	socket.on("join", (uuid) => {
+		console.log(`game ${uuid} joined`);
+		if (!games.has(uuid)) {
+			io.to(me).emit("unavailable");
+			return;
+		}
 		const game = games.get(uuid);
-		if (game.socketOne && game.socketTwo) return cb("full");
+		if (game.socketOne && game.socketTwo) {
+			io.to(me).emit("full");
+			return;
+		}
+		io.to(me).emit("joined", game.drops);
+		manageGame(uuid);
+	});
+	function manageGame(uuid) {
+		console.log(`Managing game ${uuid}`);
+		const game = games.get(uuid);
 		socket.join(uuid);
 		game.socketOne ? (game.socketTwo = me) : (game.socketOne = me);
 		if (game.socketOne && game.socketTwo) {
-			socket.to(game.socketTurn).emit("turn");
-			socket.to(game.socketWait).emit("wait");
+			io.to(game.socketTurn).emit("turn");
+			io.to(game.socketWait).emit("wait");
 		}
-		cb(game.socketTurn == me ? "turn" : "wait", game.drops);
 		socket.on("hover", (column) => {
 			if (!game.socketTurn == me) return;
 			socket.to(uuid).volatile.emit("hover", column);
@@ -60,7 +80,7 @@ io.on("connection", (socket) => {
 			if (game.socketOne == me) game.socketOne = null;
 			if (game.socketTwo == me) game.socketTwo = null;
 		});
-	});
+	}
 });
 function hasWon(game, lastDropCol, lastDropPlayer) {
 	const lastDropRow = highestOccupiedSlot(game.grid[lastDropCol]);

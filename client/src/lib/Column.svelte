@@ -6,8 +6,8 @@
 		dropColumn,
 		oppHoverColumn,
 		oppDropColumn
-	} from '$lib/stores.js';
-	import Slot from '$lib/Slot.svelte';
+	} from './stores.js';
+	import Slot from './Slot.svelte';
 
 	export let columnIndex = -1;
 	export let rows = [];

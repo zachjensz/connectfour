@@ -1,11 +1,14 @@
 <script>
-	import { status, isPlayerTurn } from '$lib/stores.js';
+	import { isPlayerTurn } from './stores.js';
+	export let text = false
 </script>
 
-{#if $isPlayerTurn}
-	<h1>Your turn</h1>
-{:else if $isPlayerTurn === false}
-	<h1>Opponent's turn</h1>
+{#if (text)}
+	<h1>{text}</h1>
 {:else}
-	<h1>{$status}</h1>
+	{#if $isPlayerTurn}
+		<h1>Your turn</h1>
+	{:else}
+		<h1>Opponent's turn</h1>
+	{/if}
 {/if}

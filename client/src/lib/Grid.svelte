@@ -1,5 +1,5 @@
 <script>
-	import Column from '$lib/Column.svelte'
+	import Column from './Column.svelte'
 
 	export let columns = Array(7)
 </script>
