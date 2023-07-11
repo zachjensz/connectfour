@@ -1,12 +1,16 @@
-import { Server } from "socket.io";
+jmport { Server } from "socket.io";
 import { nanoid } from "nanoid";
 
 const WINNING_SEQUENCE = 4;
 const COLUMNS = 7;
 const ROWS = 6;
+const DEV_SERVER_URL = 'http://localhost:5173';
+const PROD_SERVER_URL = 'https://connectfour.pages.dev'
+const DEV = import.meta.env.dev
+
 const io = new Server(6464, {
 	cors: {
-		origin: "http://localhost:5173",
+		origin: dev ? DEV_SERVER_URL : PROD_SERVER_URL,
 		methods: ["GET", "POST"],
 	},
 });
