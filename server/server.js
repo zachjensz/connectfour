@@ -1,4 +1,4 @@
-jmport { Server } from "socket.io";
+import { Server } from "socket.io";
 import { nanoid } from "nanoid";
 
 const WINNING_SEQUENCE = 4;
