@@ -4,14 +4,14 @@ import { nanoid } from "nanoid";
 const WINNING_SEQUENCE = 4;
 const COLUMNS = 7;
 const ROWS = 6;
-const SERVER_URL =
+const CLIENT_URL =
 	process.env.NODE_ENV == "production"
 		? "https://connectfour.pages.dev"
 		: "http://localhost:5173";
 
 const io = new Server(6464, {
 	cors: {
-		origin: SERVER_URL,
+		origin: CLIENT_URL,
 		methods: ["GET", "POST"],
 	},
 });
