@@ -1,7 +1,7 @@
 <script>
-	const DEV_SERVER_URL = 'http://localhost:6464';
-	const PROD_SERVER_URL = 'https://connectfour-server.onrender.com'
-	const DEV = import.meta.env.dev
+	const SERVER_URL = (process.env.NODE_ENV == "production")
+		? 'https://connectfour-server.onrender.com'
+		: 'http://localhost:6464'
 	import { io } from 'socket.io-client';
 	import { onMount } from 'svelte';
 	import {
@@ -22,7 +22,7 @@
 		active = value;
 	});
 
-		const socket = io(DEV ? DEV_SERVER_URL : PROD_SERVER_URL);
+		const socket = io(SERVER_URL);
 		(!$url.pathname.substring(1)) ? socket.emit('create') : socket.emit('join', $url.pathname.substring(1))
 			socket.on('unavailable', () => {
 				status.set('unavailable');
