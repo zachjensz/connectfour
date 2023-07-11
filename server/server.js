@@ -89,20 +89,18 @@ io.on("connection", (socket) => {
 });
 function hasWon(game, lastDropCol, lastDropPlayer) {
 	const lastDropRow = highestOccupiedSlot(game.grid[lastDropCol]);
+	const SOUTH = [0, 1];
+	const EAST = [1, 0];
+	const WEST = [-1, 0];
+	const NORTH_EAST = [1, -1];
+	const SOUTH_WEST = [-1, 1];
+	const NORTH_WEST = [1, 1];
+	const SOUTH_EAST = [-1, -1];
 	const win = [
-		[[0, 1]], // South
-		[
-			[1, 0], // East and West
-			[-1, 0],
-		],
-		[
-			[1, -1], // North East and South West
-			[-1, 1],
-		],
-		[
-			[1, 1], // North West and South East
-			[-1, -1],
-		],
+		[SOUTH],
+		[[EAST], [WEST]],
+		[[NORTH_EAST], [SOUTH_WEST]],
+		[[NORTH_WEST], [SOUTH_EAST]],
 	].some(
 		(line) =>
 			line.reduce(
