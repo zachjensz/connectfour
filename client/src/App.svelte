@@ -99,7 +99,7 @@
 	{:else if $status === "lobby"}
 		<p>Invite a friend with this link:</p>
 		<br />
-		<code>https://connectfour.url/{$url.pathname.substring(1)}</code>
+		<code>https://connectfour.pages.dev/{$url.pathname.substring(1)}</code>
 	{:else}
 		<Banner />
 		<Grid />
