@@ -17,11 +17,6 @@
 	import Grid from './lib/Grid.svelte';
 	import Banner from './lib/Banner.svelte';
 
-	$: active = false;
-	isPlayerTurn.subscribe((value) => {
-		active = value;
-	});
-
 		const socket = io(SERVER_URL);
 		(!$url.pathname.substring(1)) ? socket.emit('create') : socket.emit('join', $url.pathname.substring(1))
 			socket.on('unavailable', () => {
@@ -42,7 +37,7 @@
 				console.log('receive: created');
 			})
 			socket.on('inactive', () => {
-				status.set('lobby');
+				status.set('inactive');
 				console.log('receive: inactive');
 			});
 			socket.on('wait', () => {
@@ -61,6 +56,7 @@
 				console.log('receive: hover');
 			});
 			socket.on('drop', (column) => {
+				status.set('turn');
 				oppDropColumn.set(column);
 				isPlayerTurn.set(true);
 				console.log('receive: drop', column);
@@ -70,14 +66,15 @@
 				isPlayerTurn.set(undefined);
 			});
 			hoverColumn.subscribe((column) => {
-				if (!active) return;
+				if (!$isPlayerTurn) return;
 				socket.emit('hover', column);
 				console.log('send: hover');
 			});
 			dropColumn.subscribe((column) => {
-				if (!active) return;
+				if (!$isPlayerTurn) return;
 				if (typeof column !== 'number') return;
 				socket.emit('drop', column);
+				status.set('wait');
 				dropColumn.set(undefined);
 				isPlayerTurn.set(false);
 				console.log('send: drop', column);
@@ -86,22 +83,15 @@
 
 <main>
 	<h1>Zach's Connect Four</h1>
+	<Banner url={$url.pathname.substring(1)} />
 	{#if $url.pathname.substring(1) === ''}
-		<p>Creating Game. Please wait.</p>
-	{:else if $status === "unavailable"}
-		<Banner text={`Game ${$url.pathname.substring(1)} doesn't exist`} />
-	{:else if $status === "full"}
-		<Banner text={`Game ${$url.pathname.substring(1)} is full`} />
-	{:else if $status === "winopponent"}
-		<Banner text={`Opponent wins`} />
-	{:else if $status === "winplayer"}
-		<Banner text={`You win`} />
-	{:else if $status === "lobby"}
-		<p>Invite a friend with this link:</p>
-		<br />
-		<code>https://connectfour.pages.dev/{$url.pathname.substring(1)}</code>
+		<p>Connecting to server...</p>
 	{:else}
-		<Banner />
+		{#if $status === "inactive" || $status === 'lobby'}
+			<p>{`Invite ${$status === 'lobby' ? 'a friend' : 'them back'} with this link:`}</p>
+			<code>https://connectfour.pages.dev/{$url.pathname.substring(1)}</code>
+			<br />
+		{/if}
 		<Grid />
 	{/if}
 </main>
