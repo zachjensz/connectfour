@@ -1,6 +1,6 @@
 <script>
 	import { status } from './stores.js';
-	export let uuid
+	export let uuid = '';
 	function message(status) {
 		switch (status) {
 			case 'unavailable':
