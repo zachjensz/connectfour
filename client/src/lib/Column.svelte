@@ -1,11 +1,11 @@
 <script>
 	import {
+		status,
 		drops,
-		isPlayerTurn,
 		hoverColumn,
 		dropColumn,
 		oppHoverColumn,
-		oppDropColumn
+		oppDropColumn,
 	} from './stores.js';
 	import Slot from './Slot.svelte';
 
@@ -23,7 +23,9 @@
 		}, 20);
 		function historyToCurrent(dropped) {
 			const isHistoryOdd = history.length % 2;
-			const isPlayerTwo = (isHistoryOdd && $isPlayerTurn) || (!isHistoryOdd && !$isPlayerTurn);
+			const isPlayerTwo =
+				(isHistoryOdd && $status === 'turn') ||
+				(!isHistoryOdd && $status !== 'turn');
 			return isPlayerTwo ? !dropped[1] : dropped[1];
 		}
 	});
@@ -39,12 +41,12 @@
 	});
 
 	function handleHover() {
-		if (!$isPlayerTurn) return;
+		if ($status !== 'turn') return;
 		hoverColumn.set(columnIndex);
 		hovered = lowestFreeSlot();
 	}
 	function handleClick() {
-		if (!$isPlayerTurn) return;
+		if ($status !== 'turn') return;
 		if (drop(true)) dropColumn.set(columnIndex);
 	}
 	function drop(isPlayer) {

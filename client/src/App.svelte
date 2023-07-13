@@ -8,7 +8,6 @@
 	import {
 		status,
 		drops,
-		isPlayerTurn,
 		hoverColumn,
 		dropColumn,
 		oppHoverColumn,
@@ -46,12 +45,10 @@
 	});
 	socket.on('wait', () => {
 		status.set('wait');
-		isPlayerTurn.set(false);
 		console.log('receive: wait');
 	});
 	socket.on('turn', () => {
 		status.set('turn');
-		isPlayerTurn.set(true);
 		oppHoverColumn.set(undefined);
 		console.log('receive: turn');
 	});
@@ -62,27 +59,27 @@
 	socket.on('drop', (column) => {
 		status.set('turn');
 		oppDropColumn.set(column);
-		isPlayerTurn.set(true);
 		console.log('receive: drop', column);
 	});
 	socket.on('win', () => {
-		status.set($isPlayerTurn ? 'winopponent' : 'winplayer');
-		if (!$isPlayerTurn) winConfetti();
-		isPlayerTurn.set(undefined);
-		console.log('receive: win', $isPlayerTurn);
+		if ($status === 'turn') status.set('winopponent');
+		if ($status === 'wait') {
+			status.set('winplayer');
+			winConfetti();
+		}
+		console.log('receive: win', $status);
 	});
 	hoverColumn.subscribe((column) => {
-		if (!$isPlayerTurn) return;
+		if ($status !== 'turn') return;
 		socket.emit('hover', column);
 		console.log('send: hover');
 	});
 	dropColumn.subscribe((column) => {
-		if (!$isPlayerTurn) return;
+		if ($status !== 'turn') return;
 		if (typeof column !== 'number') return;
 		socket.emit('drop', column);
 		status.set('wait');
 		dropColumn.set(undefined);
-		isPlayerTurn.set(false);
 		console.log('send: drop', column);
 	});
 </script>
