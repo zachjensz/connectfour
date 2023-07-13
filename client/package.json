@@ -11,12 +11,12 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.4",
-    "prettier": "^3.0.0",
-    "prettier-plugin-svelte": "^2.10.1",
     "svelte": "^3.58.0",
     "vite": "^4.3.9"
   },
   "dependencies": {
+    "prettier": "^2.8.8",
+    "prettier-plugin-svelte": "^2.10.1",
     "socket.io-client": "^4.7.1",
     "wrangler": "^3.1.1"
   }
