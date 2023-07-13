@@ -88,6 +88,7 @@ io.on("connection", (socket) => {
 	}
 });
 function hasWon(game, lastDropCol, lastDropPlayer) {
+	// console.log("--== checking haswon ==--");
 	const lastDropRow = highestOccupiedSlot(game.grid[lastDropCol]);
 	const SOUTH = [0, 1];
 	const EAST = [1, 0];
@@ -97,32 +98,57 @@ function hasWon(game, lastDropCol, lastDropPlayer) {
 	const NORTH_WEST = [1, 1];
 	const SOUTH_EAST = [-1, -1];
 	const win = [
-		[SOUTH],
+		[[SOUTH]],
 		[[EAST], [WEST]],
 		[[NORTH_EAST], [SOUTH_WEST]],
 		[[NORTH_WEST], [SOUTH_EAST]],
 	].some(
 		(line) =>
 			line.reduce(
-				(length, direction) =>
-					length +
-					checkSlot(
-						lastDropPlayer,
-						lastDropCol,
-						lastDropRow,
-						direction[0],
-						direction[1]
+				(line_length, direction) =>
+					line_length +
+					direction.reduce(
+						(direction_length, direction) =>
+							direction_length +
+							checkSlot(
+								lastDropPlayer,
+								lastDropCol,
+								lastDropRow,
+								direction[0],
+								direction[1]
+							),
+						0
 					),
 				0
 			) >=
 			WINNING_SEQUENCE - 1
 	);
+	// console.log(`--== won: ${win} ==--`);
 	if (win) return true;
 	function checkSlot(player, column, row, colOff, rowOff) {
+		// function dirToEn(col, row) {
+		// 	function colToDir(col) {
+		// 		if (col == -1) return "west";
+		// 		if (col == 0) return "";
+		// 		if (col == 1) return "east";
+		// 	}
+		// 	function rowToDir(row) {
+		// 		if (row == -1) return "north";
+		// 		if (row == 0) return "";
+		// 		if (row == 1) return "south";
+		// 	}
+		// 	return `${rowToDir(rowOff)} ${colToDir(colOff)}`;
+		// }
+		// console.log(
+		// 	`${dirToEn(colOff, rowOff)}:${
+		// 		game.grid[column + colOff]?.[row + rowOff]
+		// 	}:${player}`
+		// );
 		if (game.grid[column + colOff]?.[row + rowOff] !== player) return 0;
 		return checkSlot(player, column + colOff, row + rowOff, colOff, rowOff) + 1;
 	}
 }
+//
 function highestOccupiedSlot(rows) {
 	return 1 + (lowestFreeSlot(rows) ?? -1);
 }
