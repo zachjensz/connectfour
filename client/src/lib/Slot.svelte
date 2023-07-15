@@ -109,15 +109,15 @@
 		isolation: isolate;
 		z-index: 2;
 		transform: scale(1.2);
-		animation: 250ms ease-out infinite alternate disc-dance;
+		animation: 500ms ease-out infinite alternate disc-dance;
 	}
 
 	@keyframes disc-dance {
 		0% {
-			transform: scale(1);
+			transform: scale(0.99);
 		}
 		100% {
-			transform: scale(1.1);
+			transform: scale(1.25);
 		}
 	}
 
