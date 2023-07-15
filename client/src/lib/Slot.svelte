@@ -48,22 +48,24 @@
 			stroke-width={SLOT_OUTLINE}
 		/>
 	</svg>
-	<svg
-		class="disc"
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 100 100"
-		width="100"
-		height="100"
-	>
-		<circle
-			cx="50"
-			cy="50"
-			r={DISC_SIZE - DISC_OUTLINE}
-			fill={colour(slot, true)}
-			stroke={colour(slot, false)}
-			stroke-width={DISC_OUTLINE}
-		/>
-	</svg>
+	{#if slot}
+		<svg
+			class="disc"
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 100 100"
+			width="100"
+			height="100"
+		>
+			<circle
+				cx="50"
+				cy="50"
+				r={DISC_SIZE - DISC_OUTLINE}
+				fill={colour(slot, true)}
+				stroke={colour(slot, false)}
+				stroke-width={DISC_OUTLINE}
+			/>
+		</svg>
+	{/if}
 </div>
 
 <style>
