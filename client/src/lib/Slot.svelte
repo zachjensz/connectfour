@@ -10,7 +10,7 @@
 	}
 	const SLOT_SIZE = 40; // 0-50
 	const SLOT_OUTLINE = 4;
-	const DISC_SIZE = 40; // 0-50
+	const DISC_SIZE = 38; // 0-50
 	const DISC_OUTLINE = 4;
 </script>
 
@@ -48,7 +48,13 @@
 			stroke-width={SLOT_OUTLINE}
 		/>
 	</svg>
-	<svg class="disc">
+	<svg
+		class="disc"
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 100 100"
+		width="100"
+		height="100"
+	>
 		<circle
 			cx="50"
 			cy="50"
@@ -77,7 +83,7 @@
 		height: var(--slotSize);
 	}
 	.slot svg {
-		position: relative;
+		position: absolute;
 		inset: 0;
 		width: 100%;
 		height: 100%;
