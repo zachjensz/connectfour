@@ -24,12 +24,7 @@
 </script>
 
 <div class="slot" class:hover on:click on:mouseover on:mouseleave>
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 100 100"
-		width="100"
-		height="100"
-	>
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
 		<mask id="circle-clip">
 			<rect width="100" height="100" fill="white" />
 			<circle cx="50" cy="50" r={SLOT_SIZE} fill="black" />
@@ -56,8 +51,6 @@
 			class:dance
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 100 100"
-			width="100"
-			height="100"
 		>
 			<circle
 				cx="50"
