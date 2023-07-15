@@ -4,25 +4,9 @@
 	export let drophint = false;
 	export let dance = false;
 
-	function fillColour(slot) {
-		switch (slot) {
-			case 0:
-				return 'none';
-			case 1:
-				return 'var(--c-discSecondary)';
-			case 2:
-				return 'var(--c-discPrimary)';
-		}
-	}
-	function strokeColour(slot) {
-		switch (slot) {
-			case 0:
-				return 'none';
-			case 1:
-				return 'var(--c-discSecondaryOutline)';
-			case 2:
-				return 'var(--c-discPrimaryOutline)';
-		}
+	function colour(slot, isFill) {
+		if (!slot) return 'none';
+		return isFill ? `var(--c-disc${slot})` : `var(--c-disc${slot}Outline)`;
 	}
 	const SLOT_SIZE = 40; // 0-50
 	const SLOT_OUTLINE = 4;
@@ -69,8 +53,8 @@
 			cx="50"
 			cy="50"
 			r={DISC_SIZE - DISC_OUTLINE}
-			fill={fillColour(slot)}
-			stroke={strokeColour(slot)}
+			fill={colour(slot, true)}
+			stroke={colour(slot, false)}
 			stroke-width={DISC_OUTLINE}
 		/>
 	</svg>
@@ -83,10 +67,10 @@
 		--c-board-outline: #008;
 		--c-discHighlight: none;
 		--c-discHighlightOutline: none;
-		--c-discPrimary: #ffe819;
-		--c-discPrimaryOutline: #ffc010;
-		--c-discSecondary: #e00;
-		--c-discSecondaryOutline: #b00;
+		--c-disc2: #ffe819;
+		--c-disc2Outline: #ffc010;
+		--c-disc1: #e00;
+		--c-disc1Outline: #b00;
 		--slotSize: 5rem;
 		position: relative;
 		width: var(--slotSize);
