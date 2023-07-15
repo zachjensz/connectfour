@@ -1,12 +1,21 @@
 <script>
-	export let slot = 0;
+	import { status } from './stores.js';
+	export let disc = 0;
 	export let hover = false;
 	export let drophint = false;
 	export let dance = false;
 
-	function colour(slot, isFill) {
-		if (!slot) return 'none';
-		return isFill ? `var(--c-disc${slot})` : `var(--c-disc${slot}Outline)`;
+	function getColour(isFill, discType) {
+		return isFill
+			? `var(--c-disc${discType})`
+			: `var(--c-disc${discType}Outline)`;
+	}
+	function getStyle(isFill) {
+		if (!disc && !drophint) return 'none';
+		return getColour(
+			isFill,
+			drophint ? ($status === 'turn' ? '1' : '2') : disc,
+		);
 	}
 	const SLOT_SIZE = 40; // 0-50
 	const SLOT_OUTLINE = 4;
@@ -14,15 +23,7 @@
 	const DISC_OUTLINE = 4;
 </script>
 
-<div
-	class="slot"
-	class:hover
-	class:drophint
-	class:dance
-	on:click
-	on:mouseover
-	on:mouseleave
->
+<div class="slot" class:hover on:click on:mouseover on:mouseleave>
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 100 100"
@@ -48,9 +49,11 @@
 			stroke-width={SLOT_OUTLINE}
 		/>
 	</svg>
-	{#if slot}
+	{#if disc || drophint}
 		<svg
 			class="disc"
+			class:drophint
+			class:dance
 			xmlns="http://www.w3.org/2000/svg"
 			viewBox="0 0 100 100"
 			width="100"
@@ -60,8 +63,8 @@
 				cx="50"
 				cy="50"
 				r={DISC_SIZE - DISC_OUTLINE}
-				fill={colour(slot, true)}
-				stroke={colour(slot, false)}
+				fill={getStyle(true)}
+				stroke={getStyle(false)}
 				stroke-width={DISC_OUTLINE}
 			/>
 		</svg>
@@ -98,12 +101,16 @@
 		animation-name: disc-drop;
 		animation-duration: 1200ms;
 	}
-	/* .slot.dance::before { */
-	/* 	isolation: isolate; */
-	/* 	z-index: 2; */
-	/* 	transform: scale(1.2); */
-	/* 	animation: 250ms ease-out infinite alternate disc-dance; */
-	/* } */
+	.disc.drophint {
+		animation: none;
+		filter: saturate(35%);
+	}
+	.disc.dance {
+		isolation: isolate;
+		z-index: 2;
+		transform: scale(1.2);
+		animation: 250ms ease-out infinite alternate disc-dance;
+	}
 
 	@keyframes disc-dance {
 		0% {

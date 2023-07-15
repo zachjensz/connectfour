@@ -69,8 +69,8 @@
 	on:mouseleave={() => (hovered = -1)}
 	on:click={handleClick}
 >
-	{#each rows as slot, slotIndex}
-		<Slot {slot} hover={hovered >= 0} drophint={hovered == slotIndex} />
+	{#each rows as disc, slotIndex}
+		<Slot {disc} hover={hovered >= 0} drophint={hovered == slotIndex} />
 	{/each}
 </div>
 
