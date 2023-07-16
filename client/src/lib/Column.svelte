@@ -40,10 +40,14 @@
 		oppDropColumn.set(undefined);
 	});
 
-	function handleHover() {
+	function handleHoverEnter(start) {
 		if ($status !== 'turn') return;
 		hoverColumn.set(columnIndex);
 		hovered = lowestFreeSlot();
+	}
+	function handleHoverLeave(start) {
+		if ($status !== 'turn') return;
+		hovered = -1;
 	}
 	function handleClick() {
 		if ($status !== 'turn') return;
@@ -54,7 +58,6 @@
 		if (dropPosition === null) return false;
 		hovered = -1;
 		rows[dropPosition] = isPlayer ? 1 : 2;
-		hovered = lowestFreeSlot();
 		return true;
 	}
 	function lowestFreeSlot() {
@@ -65,8 +68,8 @@
 
 <div
 	class="column"
-	on:mouseenter={handleHover}
-	on:mouseleave={() => (hovered = -1)}
+	on:mouseenter={handleHoverEnter}
+	on:mouseleave={handleHoverLeave}
 	on:click={handleClick}
 >
 	{#each rows as disc, slotIndex}

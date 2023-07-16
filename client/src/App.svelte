@@ -49,7 +49,8 @@
 	});
 	socket.on('turn', () => {
 		status.set('turn');
-		oppHoverColumn.set(undefined);
+		hoverColumn.set(-1);
+		oppHoverColumn.set(-1);
 		console.log('receive: turn');
 	});
 	socket.on('hover', (column) => {
@@ -59,6 +60,8 @@
 	socket.on('drop', (column) => {
 		status.set('turn');
 		oppDropColumn.set(column);
+		hoverColumn.set(-1);
+		oppHoverColumn.set(-1);
 		console.log('receive: drop', column);
 	});
 	socket.on('win', () => {
@@ -79,6 +82,8 @@
 		if (typeof column !== 'number') return;
 		socket.emit('drop', column);
 		status.set('wait');
+		hoverColumn.set(-1);
+		oppHoverColumn.set(-1);
 		dropColumn.set(undefined);
 		console.log('send: drop', column);
 	});
