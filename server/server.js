@@ -58,97 +58,70 @@ io.on("connection", (socket) => {
 		socket.join(uuid);
 		game.socketOne ? (game.socketTwo = me) : (game.socketOne = me);
 		if (game.socketOne && game.socketTwo) {
-			io.to(game.socketTurn).emit("turn");
-			io.to(game.socketWait).emit("wait");
+			io.to(game.socketTurn).emit('turn');
+			io.to(game.socketWait).emit('wait');
 		}
-		socket.on("hover", (column) => {
+		socket.on('hover', (column) => {
 			if (!game.socketTurn == me) return;
-			socket.to(uuid).volatile.emit("hover", column);
+			socket.to(uuid).volatile.emit('hover', column);
 		});
-		socket.on("drop", (column) => {
+		socket.on('drop', (column) => {
 			if (!game.socketTurn == me) return;
-			if (typeof column !== "number") return;
-			socket.to(uuid).emit("drop", column);
+			if (typeof column !== 'number') return;
+			socket.to(uuid).emit('drop', column);
 			game.drops.push(column);
 			game.grid[column][lowestFreeSlot(game.grid[column])] = game.socketOneTurn
 				? 1
 				: 2;
-			if (hasWon(game, column, game.socketOneTurn ? 1 : 2)) {
-				io.to(uuid).emit("win");
+			if (winPositions(game, column, game.socketOneTurn ? 1 : 2).length > 0) {
+				io.to(uuid).emit('win');
 			} else {
 				const newTurn = !game.socketOneTurn;
 				game.socketOneTurn = newTurn;
 			}
 		});
-		socket.on("disconnect", () => {
-			socket.to(uuid).emit("inactive");
+		socket.on('disconnect', () => {
+			socket.to(uuid).emit('inactive');
 			if (game.socketOne == me) game.socketOne = null;
 			if (game.socketTwo == me) game.socketTwo = null;
 		});
 	}
 });
-function hasWon(game, lastDropCol, lastDropPlayer) {
-	// console.log("--== checking haswon ==--");
-	const lastDropRow = highestOccupiedSlot(game.grid[lastDropCol]);
-	const SOUTH = [0, 1];
-	const EAST = [1, 0];
-	const WEST = [-1, 0];
-	const NORTH_EAST = [1, -1];
-	const SOUTH_WEST = [-1, 1];
-	const NORTH_WEST = [1, 1];
-	const SOUTH_EAST = [-1, -1];
-	const win = [
-		[[SOUTH]],
-		[[EAST], [WEST]],
-		[[NORTH_EAST], [SOUTH_WEST]],
-		[[NORTH_WEST], [SOUTH_EAST]],
-	].some(
-		(line) =>
-			line.reduce(
-				(line_length, direction) =>
-					line_length +
-					direction.reduce(
-						(direction_length, direction) =>
-							direction_length +
-							checkSlot(
-								lastDropPlayer,
-								lastDropCol,
-								lastDropRow,
-								direction[0],
-								direction[1]
-							),
-						0
-					),
-				0
-			) >=
-			WINNING_SEQUENCE - 1
-	);
-	// console.log(`--== won: ${win} ==--`);
-	if (win) return true;
-	function checkSlot(player, column, row, colOff, rowOff) {
-		// function dirToEn(col, row) {
-		// 	function colToDir(col) {
-		// 		if (col == -1) return "west";
-		// 		if (col == 0) return "";
-		// 		if (col == 1) return "east";
-		// 	}
-		// 	function rowToDir(row) {
-		// 		if (row == -1) return "north";
-		// 		if (row == 0) return "";
-		// 		if (row == 1) return "south";
-		// 	}
-		// 	return `${rowToDir(rowOff)} ${colToDir(colOff)}`;
-		// }
-		// console.log(
-		// 	`${dirToEn(colOff, rowOff)}:${
-		// 		game.grid[column + colOff]?.[row + rowOff]
-		// 	}:${player}`
-		// );
-		if (game.grid[column + colOff]?.[row + rowOff] !== player) return 0;
-		return checkSlot(player, column + colOff, row + rowOff, colOff, rowOff) + 1;
+function winPositions(game, col, player) {
+	const row = highestOccupiedSlot(game.grid[col]),
+		down = [0, 1],
+		right = [1, 0],
+		left = [-1, 0],
+		upRight = [1, -1],
+		downLeft = [-1, 1],
+		upLeft = [1, 1],
+		downRight = [-1, -1];
+	return [
+		...segments([down]),
+		...segments([right, left]),
+		...segments([upRight, downLeft]),
+		...segments([upLeft, downRight]),
+	];
+	function segments(directions) {
+		const lengths = directions.map(([colDir, rowDir]) =>
+			dirLength(col, row, colDir, rowDir),
+		);
+		const totalLength = lengths.reduce((total, length) => total + length, 0);
+		if (totalLength < WINNING_SEQUENCE - 1) return [];
+		return directions.map((dir, index) => dirPositions(dir, lengths[index]));
+	}
+	function dirPositions([colDir, rowDir], length) {
+		const positions = [];
+		for (let i = length; i > 0; i--) {
+			positions.push([col + i * colDir, row + i * rowDir]);
+		}
+		return positions;
+	}
+	function dirLength(col, row, colDir, rowDir) {
+		if (game.grid[col + colDir]?.[row + rowDir] !== player) return 0;
+		return dirLength(col + colDir, row + rowDir, colDir, rowDir) + 1;
 	}
 }
-//
 function highestOccupiedSlot(rows) {
 	return 1 + (lowestFreeSlot(rows) ?? -1);
 }
