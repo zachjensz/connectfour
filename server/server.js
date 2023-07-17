@@ -1,27 +1,27 @@
-import { Server } from "socket.io";
-import { nanoid } from "nanoid";
+import { Server } from 'socket.io';
+import { nanoid } from 'nanoid';
 
 const WINNING_SEQUENCE = 4;
 const COLUMNS = 7;
 const ROWS = 6;
 const CLIENT_URL =
-	process.env.NODE_ENV == "production"
-		? "https://connectfour.pages.dev"
-		: "http://localhost:5173";
+	process.env.NODE_ENV == 'production'
+		? 'https://connectfour.pages.dev'
+		: 'http://localhost:5173';
 
 const io = new Server(6464, {
 	cors: {
 		origin: CLIENT_URL,
-		methods: ["GET", "POST"],
+		methods: ['GET', 'POST'],
 	},
 });
 const games = new Map();
-io.on("connection", (socket) => {
+io.on('connection', (socket) => {
 	const me = socket.id;
-	socket.on("create", () => {
+	socket.on('create', () => {
 		const new_uuid = nanoid(5);
 		games.set(new_uuid, {
-			grid: Array.from({ length: COLUMNS }, () => Array(ROWS).fill("")),
+			grid: Array.from({ length: COLUMNS }, () => Array(ROWS).fill('')),
 			drops: [],
 			socketOne: null,
 			socketTwo: null,
@@ -33,23 +33,23 @@ io.on("connection", (socket) => {
 				return this.socketOneTurn ? this.socketTwo : this.socketOne;
 			},
 		});
-		io.to(me).emit("created", new_uuid);
+		io.to(me).emit('created', new_uuid);
 		console.log(`game ${new_uuid} created`);
 		const game = games.get(new_uuid);
 		manageGame(new_uuid);
 	});
-	socket.on("join", (uuid) => {
+	socket.on('join', (uuid) => {
 		console.log(`game ${uuid} joined`);
 		if (!games.has(uuid)) {
-			io.to(me).emit("unavailable");
+			io.to(me).emit('unavailable');
 			return;
 		}
 		const game = games.get(uuid);
 		if (game.socketOne && game.socketTwo) {
-			io.to(me).emit("full");
+			io.to(me).emit('full');
 			return;
 		}
-		io.to(me).emit("joined", game.drops);
+		io.to(me).emit('joined', game.drops);
 		manageGame(uuid);
 	});
 	function manageGame(uuid) {
