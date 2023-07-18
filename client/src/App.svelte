@@ -12,6 +12,7 @@
 		dropColumn,
 		oppHoverColumn,
 		oppDropColumn,
+		winPositions,
 	} from './lib/stores.js';
 	import url from './lib/url.js';
 	import Grid from './lib/Grid.svelte';
@@ -64,13 +65,11 @@
 		oppHoverColumn.set(-1);
 		console.log('receive: drop', column);
 	});
-	socket.on('win', () => {
+	socket.on('win', (positions) => {
 		if ($status === 'turn') status.set('winopponent');
-		if ($status === 'wait') {
-			status.set('winplayer');
-			winConfetti();
-		}
-		console.log('receive: win', $status);
+		if ($status === 'wait') status.set('winplayer');
+		winPositions.set(positions);
+		console.log('receive: win', positions);
 	});
 	hoverColumn.subscribe((column) => {
 		if ($status !== 'turn') return;

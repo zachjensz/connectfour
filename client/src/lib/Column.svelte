@@ -6,6 +6,7 @@
 		dropColumn,
 		oppHoverColumn,
 		oppDropColumn,
+		winPositions,
 	} from './stores.js';
 	import Slot from './Slot.svelte';
 
@@ -73,7 +74,14 @@
 	on:click={handleClick}
 >
 	{#each rows as disc, slotIndex}
-		<Slot {disc} hover={hovered >= 0} drophint={hovered == slotIndex} />
+		<Slot
+			{disc}
+			hover={hovered >= 0}
+			drophint={hovered == slotIndex}
+			dance={$winPositions.some(
+				([col, row]) => col == columnIndex && row == slotIndex,
+			)}
+		/>
 	{/each}
 </div>
 

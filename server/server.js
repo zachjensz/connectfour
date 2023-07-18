@@ -73,8 +73,12 @@ io.on('connection', (socket) => {
 			game.grid[column][lowestFreeSlot(game.grid[column])] = game.socketOneTurn
 				? 1
 				: 2;
-			if (winPositions(game, column, game.socketOneTurn ? 1 : 2).length > 0) {
-				io.to(uuid).emit('win');
+			const win = winPositions(game, column, game.socketOneTurn ? 1 : 2);
+			if (win.length > 0) {
+				io.to(uuid).emit('win', [
+					[column, highestOccupiedSlot(game.grid[column])],
+					...win.flat(),
+				]);
 			} else {
 				const newTurn = !game.socketOneTurn;
 				game.socketOneTurn = newTurn;

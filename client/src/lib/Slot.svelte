@@ -23,7 +23,7 @@
 	const DISC_OUTLINE = 4;
 </script>
 
-<div class="slot" class:hover on:click on:mouseover on:mouseleave>
+<div class="slot" class:dance class:hover on:click on:mouseover on:mouseleave>
 	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
 		<mask id="circle-clip">
 			<rect width="100" height="100" fill="white" />
