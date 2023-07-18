@@ -4,13 +4,19 @@
 	confetti({
 		particleCount: 1000,
 		spread: 200,
-		scalar: 1.25,
+		scalar: 2,
 		startVelocity: 90,
 		origin: { y: 1.2 },
 	});
 	var duration = 25 * 1000;
 	var animationEnd = Date.now() + duration;
-	var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+	var defaults = {
+		startVelocity: 30,
+		scalar: 2,
+		spread: 360,
+		ticks: 60,
+		zIndex: 0,
+	};
 
 	function randomInRange(min, max) {
 		return Math.random() * (max - min) + min;
