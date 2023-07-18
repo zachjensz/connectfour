@@ -66,8 +66,8 @@
 
 <style>
 	.slot {
-		--c-board: #342105;
-		--c-board-outline: #2b1b04;
+		--c-board: #111;
+		--c-board-outline: #000;
 		--c-discHighlight: none;
 		--c-discHighlightOutline: none;
 		--c-disc2: #ff9100;
@@ -75,6 +75,7 @@
 		--c-disc1: #006eff;
 		--c-disc1Outline: #007dff;
 		--slotSize: 5rem;
+		opacity: 0.8;
 		position: relative;
 		width: var(--slotSize);
 		height: var(--slotSize);
