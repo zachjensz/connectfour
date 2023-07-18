@@ -66,15 +66,14 @@
 
 <style>
 	.slot {
-		--c-board: #00e;
-		--c-board-outline: #00c;
-		--c-board-outline: #008;
+		--c-board: #342105;
+		--c-board-outline: #2b1b04;
 		--c-discHighlight: none;
 		--c-discHighlightOutline: none;
-		--c-disc2: #ffe819;
-		--c-disc2Outline: #ffc010;
-		--c-disc1: #e00;
-		--c-disc1Outline: #b00;
+		--c-disc2: #ff9100;
+		--c-disc2Outline: #ff8200;
+		--c-disc1: #006eff;
+		--c-disc1Outline: #007dff;
 		--slotSize: 5rem;
 		position: relative;
 		width: var(--slotSize);
