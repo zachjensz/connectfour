@@ -95,15 +95,6 @@
 	{#if $url.pathname.substring(1) === ''}
 		<p>Connecting to server...</p>
 	{:else}
-		{#if $status === 'inactive' || $status === 'lobby'}
-			<p>
-				{`Invite ${
-					$status === 'lobby' ? 'a friend' : 'them back'
-				} with this link:`}
-			</p>
-			<code>https://connectfour.pages.dev/{$url.pathname.substring(1)}</code>
-			<br />
-		{/if}
 		<Grid />
 	{/if}
 	{#if $status == 'winplayer'}

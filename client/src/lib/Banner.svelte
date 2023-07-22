@@ -1,5 +1,7 @@
 <script>
 	import { status } from './stores.js';
+	import url from './url.js';
+
 	export let uuid = '';
 	function message(status) {
 		switch (status) {
@@ -32,3 +34,10 @@
 </script>
 
 <h1>{message($status)}</h1>
+{#if $status === 'inactive' || $status === 'lobby'}
+	<p>
+		{`Invite ${$status === 'lobby' ? 'a friend' : 'them back'} with this link:`}
+	</p>
+	<code>https://connectfour.pages.dev/{$url.pathname.substring(1)}</code>
+	<br />
+{/if}
