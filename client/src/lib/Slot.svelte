@@ -18,8 +18,7 @@
 		);
 	}
 	const SLOT_SIZE = 40; // 0-50
-	const SLOT_OUTLINE = 4;
-	const DISC_SIZE = 38; // 0-50
+	const DISC_SIZE = 44; // 0-50
 	const DISC_OUTLINE = 4;
 </script>
 
@@ -34,14 +33,6 @@
 			height="100"
 			mask="url(#circle-clip)"
 			fill="var(--c-board)"
-		/>
-		<circle
-			cx="50"
-			cy="50"
-			r={SLOT_SIZE - SLOT_OUTLINE / 2}
-			fill="none"
-			stroke="var(--c-board-outline)"
-			stroke-width={SLOT_OUTLINE}
 		/>
 	</svg>
 	{#if disc || drophint}
@@ -66,8 +57,7 @@
 
 <style>
 	.slot {
-		--c-board: #111;
-		--c-board-outline: #000;
+		--c-board: currentColor;
 		--c-discHighlight: none;
 		--c-discHighlightOutline: none;
 		--c-disc2: #ff9100;
@@ -75,7 +65,6 @@
 		--c-disc1: #006eff;
 		--c-disc1Outline: #007dff;
 		--slotSize: 5rem;
-		opacity: 0.8;
 		position: relative;
 		width: var(--slotSize);
 		height: var(--slotSize);
