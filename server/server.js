@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
 	socket.on('create', () => {
 		const new_uuid = nanoid(5);
 		games.set(new_uuid, {
-			grid: Array.from({ length: COLUMNS }, () => Array(ROWS).fill('')),
+			grid: createGrid(COLUMNS, ROWS),
 			drops: [],
 			socketOne: null,
 			socketTwo: null,
@@ -132,4 +132,7 @@ function highestOccupiedSlot(rows) {
 function lowestFreeSlot(rows) {
 	if (rows[0] > 0) return null;
 	return rows.length - [...rows].reverse().findIndex((slot) => slot < 1) - 1;
+}
+function createGrid(columns, rows) {
+	return Array.from({ length: columns }, () => Array(rows).fill(''));
 }
