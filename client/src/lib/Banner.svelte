@@ -41,3 +41,6 @@
 	<code>https://connectfour.pages.dev/{$url.pathname.substring(1)}</code>
 	<br />
 {/if}
+{#if $status === 'winplayer'}
+	<p>Click anywhere for new game</p>
+{/if}
