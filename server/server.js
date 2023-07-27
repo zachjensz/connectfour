@@ -79,6 +79,8 @@ io.on('connection', (socket) => {
 					[column, highestOccupiedSlot(game.grid[column])],
 					...win.flat(),
 				]);
+				game.drops = [];
+				game.grid = createGrid(COLUMNS, ROWS);
 			} else {
 				const newTurn = !game.socketOneTurn;
 				game.socketOneTurn = newTurn;

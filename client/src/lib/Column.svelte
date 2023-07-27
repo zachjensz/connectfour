@@ -2,6 +2,7 @@
 	import {
 		status,
 		drops,
+		rowCount,
 		hoverColumn,
 		dropColumn,
 		oppHoverColumn,
@@ -11,11 +12,13 @@
 	import Slot from './Slot.svelte';
 
 	export let columnIndex = -1;
-	export let rows = [];
+	$: rows = Array($rowCount).fill(0);
 	$: hovered = -1;
 
 	drops.subscribe((history) => {
-		if (!history) return;
+		if (!history) {
+			rows = Array($rowCount).fill(0);
+		}
 		setTimeout(() => {
 			history
 				.map((column, index) => [column, index % 2 === 0])

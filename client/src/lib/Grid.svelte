@@ -1,13 +1,14 @@
 <script>
-	import Column from './Column.svelte'
-
-	export let columns = Array(7)
+	import Column from './Column.svelte';
+	import { columnCount } from './stores.js';
 </script>
+
 <div class="grid">
-	{#each columns as column, columnIndex}
-		<Column {columnIndex} rows={Array(6).fill(0)} />
+	{#each Array($columnCount) as column, columnIndex}
+		<Column {columnIndex} />
 	{/each}
 </div>
+
 <style>
 	.grid {
 		display: flex;
